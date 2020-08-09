@@ -3,7 +3,7 @@ const app = express();
 
 // router handler
 app.get("/", (req, res) => {
-  res.send("Hello, there");
+  res.send("Changed something");
 });
 
 const PORT = process.env.PORT || 5000; // process.env.PORT for production only
