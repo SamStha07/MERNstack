@@ -15,9 +15,17 @@ passport.use(
     },
     // identifies the user info and save it to our db
     (accessToken, refreshToken, profile, done) => {
-      new User({
-        googleId: profile.id,
-      }).save(); //it will save it to the db
+      // we are creating query inorder to check if the user has before logged in or not
+      User.findOne({ googleId: profile.id }).then((exisitingUser) => {
+        if (exisitingUser) {
+          // we already have a record with given prfile ID
+        } else {
+          // we don't have a user record with this ID, make a new record!
+          new User({
+            googleId: profile.id,
+          }).save(); //it will save it to the db
+        }
+      });
     }
   )
 );
