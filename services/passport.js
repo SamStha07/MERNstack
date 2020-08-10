@@ -19,11 +19,14 @@ passport.use(
       User.findOne({ googleId: profile.id }).then((exisitingUser) => {
         if (exisitingUser) {
           // we already have a record with given prfile ID
+          done(null, exisitingUser);
         } else {
           // we don't have a user record with this ID, make a new record!
           new User({
             googleId: profile.id,
-          }).save(); //it will save it to the db
+          })
+            .save() //it will save it to the db
+            .then((user) => done(null, user));
         }
       });
     }
