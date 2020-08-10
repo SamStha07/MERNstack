@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cookieSession = require("cookie-session");
+const passport = require("passport");
 const keys = require("./config//keys");
 require("./models/User");
 const authRoutes = require("./routes/authRoutes");
@@ -13,6 +15,17 @@ mongoose.connect(keys.mongoURI, {
 require("./services/passport");
 
 const app = express();
+
+// inorder to run serializeUser and deserializeUser to enable cookies
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 1000, //automatically expires in 30days in ms
+    keys: [keys.cookieKey], //randomly generated in keys
+  })
+);
+// then essentially telling passport to use cookies to manage our authentication
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Route handler
 authRoutes(app);
