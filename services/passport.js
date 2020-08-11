@@ -1,5 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const mongoose = require("mongoose");
 const keys = require("../config/keys");
 
@@ -37,6 +38,33 @@ passport.use(
           // we don't have a user record with this ID, make a new record!
           new User({
             googleId: profile.id,
+          })
+            .save() //it will save it to the db
+            .then((user) => done(null, user));
+        }
+      });
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: keys.facebookID,
+      clientSecret: keys.facebookSecret,
+      callbackURL: "/auth/facebook/callback",
+    },
+    // identifies the user info and save it to our db
+    (accessToken, refreshToken, profile, done) => {
+      // we are creating query inorder to check if the user has before logged in or not
+      User.findOne({ facebookId: profile.id }).then((exisitingUser) => {
+        if (exisitingUser) {
+          // we already have a record with given prfile ID
+          done(null, exisitingUser);
+        } else {
+          // we don't have a user record with this ID, make a new record!
+          new User({
+            facebookId: profile.id,
           })
             .save() //it will save it to the db
             .then((user) => done(null, user));
