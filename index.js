@@ -6,10 +6,17 @@ const keys = require("./config/keys");
 require("./models/User");
 const authRoutes = require("./routes/authRoutes");
 
-mongoose.connect(keys.mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose
+  .connect(keys.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("I'm in motherfucker");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 //services
 require("./services/passport");
