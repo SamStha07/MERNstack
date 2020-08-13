@@ -28,21 +28,16 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     // identifies the user info and save it to our db
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // we are creating query inorder to check if the user has before logged in or not
-      User.findOne({ googleId: profile.id }).then((exisitingUser) => {
-        if (exisitingUser) {
-          // we already have a record with given prfile ID
-          done(null, exisitingUser);
-        } else {
-          // we don't have a user record with this ID, make a new record!
-          new User({
-            googleId: profile.id,
-          })
-            .save() //it will save it to the db
-            .then((user) => done(null, user));
-        }
-      });
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) {
+        // we already have a record with given prfile ID
+        return done(null, existingUser);
+      }
+      // we don't have a user record with this ID, make a new record!
+      const user = await new User({ googleId: profile.id }).save(); //it will save it to the db
+      done(null, existingUser);
     }
   )
 );
@@ -55,21 +50,16 @@ passport.use(
       callbackURL: "/auth/facebook/callback",
     },
     // identifies the user info and save it to our db
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // we are creating query inorder to check if the user has before logged in or not
-      User.findOne({ facebookId: profile.id }).then((exisitingUser) => {
-        if (exisitingUser) {
-          // we already have a record with given prfile ID
-          done(null, exisitingUser);
-        } else {
-          // we don't have a user record with this ID, make a new record!
-          new User({
-            facebookId: profile.id,
-          })
-            .save() //it will save it to the db
-            .then((user) => done(null, user));
-        }
-      });
+      const existingUser = await User.findOne({ facebookId: profile.id });
+      if (existingUser) {
+        // we already have a record with given prfile ID
+        return done(null, existingUser);
+      }
+      // we don't have a user record with this ID, make a new record!
+      const user = await new User({ facebookId: profile.id }).save(); //it will save it to the db
+      done(null, existingUser);
     }
   )
 );
